@@ -4,6 +4,7 @@ library(rpart)
 library(ggplot2)
 library(rattle)
 
+
 # After an inital file load, it has been observed that a lot of variable contained
 # NA, blank space and #DIV/0! value.
 # Easier and shortest solution to consider blank space, #DIV/0! and NA as NA
@@ -14,7 +15,6 @@ test_file <- read.csv(file = 'pml-testing.csv',na.strings = c('NA','#DIV/0!','')
 ggplot(train_file, aes(classe, ..count..)) + geom_bar()
 
 #Remove column containing NA value (based on the parameter from the read.csv)
-#train_file_NA <- apply(train_file,2,function(x) {sum(is.na(x))});
 train_data <- train_file[,colSums(is.na(train_file)) == 0]
 test_data <- test_file[,colSums(is.na(train_file)) == 0]
 
@@ -27,10 +27,6 @@ set.seed(101)
 intrain <- createDataPartition(train_data$classe, p = 0.7, list = FALSE) 
 training = train_data[intrain, ] # 70% split 
 testing <- train_data[-intrain, ] # 30% split 
-
-#train_file$classe_Activity <-train_file$classe 
-#levels(train_file$classe_Activity) <- c("Correct Execution of Exercise","Incorrect Throw Elbow to Front","Incorrect Lift Dumbbell Halfway","Incorrect Lower dumbbell Halfway","Incorrect Throw Hips to Front") 
-#qplot(classe, num_window, data=train_file,color=user_name,xlab="Six participants",ylab=expression("Number of Windows Capturing Activity"),main=expression("Bar Bell Lifting"))
 
 # Model Classification Tree
 set.seed(202)
