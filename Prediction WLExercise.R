@@ -11,7 +11,6 @@ library(rattle)
 train_file <- read.csv(file = 'pml-training.csv',na.strings = c('NA','#DIV/0!',''))
 test_file <- read.csv(file = 'pml-testing.csv',na.strings = c('NA','#DIV/0!',''))
 
-#ggplot(train_file) + geom_bar(aes(classe, fill = classe)) + scale_fill_grey(start = 0, end = 1)
 ggplot(train_file, aes(classe, ..count..)) + geom_bar()
 
 #Remove column containing NA value (based on the parameter from the read.csv)
@@ -30,8 +29,8 @@ testing <- train_data[-intrain, ] # 30% split
 
 # Model Classification Tree
 set.seed(202)
-trControl = trainControl(method = "cv", number = 5)
-model_fit_Rpart <- train(classe ~.,data = training, method="rpart",trControl=trControl)
+fitControl = trainControl(method = "cv", number = 5)
+model_fit_Rpart <- train(classe ~.,data = training, method="rpart",trControl=fitControl)
 # The application of the rpart() generated more accuracy than the train() function
 # function but created more variances. Hence the selection of the train() function
 # model_fit_Rpart <- rpart(classe ~ ., data=training, method="class")
