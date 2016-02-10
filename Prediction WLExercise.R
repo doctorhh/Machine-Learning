@@ -1,7 +1,7 @@
+library(ggplot2)
 library(caret)
 library(randomForest)
 library(rpart)
-library(ggplot2)
 library(rattle)
 
 
@@ -30,25 +30,34 @@ testing <- train_data[-intrain, ] # 30% split
 
 # Model Classification Tree
 set.seed(202)
-# trControl = trainControl(method = "cv", number = 4, allowParallel =TRUE)
-# model_fit_Rpart <- train(classe ~.,data = training,method="rpart",trControl=trControl)
-# The application of this model yield more accuracy than the train() function at 49%
-model_fit_Rpart <- rpart(classe ~ ., data=training, method="class")
-model_fit_Rpart
-fancyRpartPlot(model_fit_Rpart)
+trControl = trainControl(method = "cv", number = 5)
+model_fit_Rpart <- train(classe ~.,data = training, method="rpart",trControl=trControl)
+# The application of the rpart() generated more accuracy than the train() function
+# function but created more variances. Hence the selection of the train() function
+# model_fit_Rpart <- rpart(classe ~ ., data=training, method="class")
+model_fit_Rpart$finalModel
+fancyRpartPlot(model_fit_Rpart$finalModel)
 
-predict_Rpart<-predict(model_fit_Rpart,testing, type="class")
+# Testing the model and predicting value from the testing set.
+predict_Rpart<-predict(model_fit_Rpart,testing)
+# predict_Rpart<-predict(model_fit_Rpart,testing, type='class')
 conf_matrix_Rpart<-confusionMatrix(predict_Rpart,testing$classe)
 conf_matrix_Rpart
 
 # Model Random Forest
 set.seed(303)
-#trControl = trainControl(method = "oob") # For Random Forest
-model_fit_RF <- randomForest(classe ~ ., training)
+# Setting the parameter for the resampling method to "out of Box" sampling and to
+# limit the number of 5 iteration instead of the default of 25 (to save CPU processing) time
+trControl = trainControl(method = "oob", number=5)
+model_fit_RF <- train(classe ~.,data = training, method="rf", trControl=trControl)
+# Due to memory & time constraint, the original randomForest () has provided similar 
+# result kappa (.9944) compared to the train() with the "rf" method.
+# model_fit_RF <- randomForest(classe ~ ., training)
 model_fit_RF
 
+# Testing the model and predicting value from the testing set.
 predict_RF<-predict(model_fit_RF,testing)
-conf_matrix_RF<-confusionMatrix(model_test_RF,testing$classe)
+conf_matrix_RF<-confusionMatrix(predict_RF,testing$classe)
 conf_matrix_RF
 
 #Test file validation
